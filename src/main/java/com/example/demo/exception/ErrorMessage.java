@@ -1,9 +1,5 @@
 package com.example.demo.exception;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
-
 public class ErrorMessage {
     private int statusCode;
     private String message;

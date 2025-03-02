@@ -21,4 +21,8 @@ public class ExceptionHandle {
     public ErrorMessage handleUserExistException(UserExistException ex) {
         return new ErrorMessage(400, ex.getMessage());
     }
+    @ExceptionHandler(Exception.class)
+    public ErrorMessage handleCustomException(Exception e) {
+        return new ErrorMessage(400, e.getMessage());
+    }
 }
