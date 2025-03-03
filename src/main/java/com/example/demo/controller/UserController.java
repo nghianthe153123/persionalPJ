@@ -1,10 +1,15 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.LoginDto;
 import com.example.demo.model.UserMaster;
 import com.example.demo.service.MasterUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +22,9 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     @Autowired
     private MasterUserService userService;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
     @GetMapping("/hello")
     public String hello() {
@@ -35,6 +43,17 @@ public class UserController {
     @PostMapping("/save")
     public UserMaster saveUser(@RequestBody UserMaster user) {
         return userService.save(user);
+    }
+
+    @PostMapping("/signin")
+    public ResponseEntity<String> authenticateUser(@RequestBody LoginDto loginDto){
+        System.out.println("aaa");
+
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                loginDto.getUsername(), loginDto.getPassword()));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        return new ResponseEntity<>("User signed-in successfully!.", HttpStatus.OK);
     }
 
     //vieest api login
