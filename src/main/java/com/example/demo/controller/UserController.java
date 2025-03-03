@@ -3,6 +3,8 @@ package com.example.demo.controller;
 import com.example.demo.dto.LoginDto;
 import com.example.demo.model.UserMaster;
 import com.example.demo.service.MasterUserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -46,14 +48,18 @@ public class UserController {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<String> authenticateUser(@RequestBody LoginDto loginDto){
+    public ResponseEntity<String> authenticateUser(@RequestBody LoginDto loginDto, HttpServletRequest request){
         System.out.println("aaa");
 
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 loginDto.getUsername(), loginDto.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return new ResponseEntity<>("User signed-in successfully!.", HttpStatus.OK);
+
+        HttpSession session = request.getSession();
+        String sessionId = session.getId(); // Lấy session ID
+
+        return ResponseEntity.ok("Session ID: " + sessionId);
     }
 
     //vieest api login
