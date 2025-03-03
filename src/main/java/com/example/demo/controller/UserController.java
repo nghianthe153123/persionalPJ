@@ -23,12 +23,12 @@ public class UserController {
         return "Hello World";
     }
 
-    @GetMapping("user/userProfile")
+    @GetMapping("/user")
     @PreAuthorize("hasRole('USER')")
     public String helloUser(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        log.info("username: " + authentication.getPrincipal().toString());
-        log.info("password: " + authentication.getAuthorities());
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        log.info("username: " + authentication.getPrincipal().toString());
+//        log.info("password: " + authentication.getAuthorities());
         return "Hello User";
     }
 
@@ -36,4 +36,7 @@ public class UserController {
     public UserMaster saveUser(@RequestBody UserMaster user) {
         return userService.save(user);
     }
+
+    //vieest api login
+
 }

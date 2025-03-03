@@ -35,6 +35,8 @@ public class TaskService {
 
     public Task save(Task task) {
         Long userId = task.getUserId();
+        System.out.println(userId);
+        System.out.println(task);
         try {
             userRepository.existsById(userId);
         } catch (Exception e) {

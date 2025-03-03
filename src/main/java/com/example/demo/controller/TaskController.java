@@ -6,10 +6,7 @@ import com.example.demo.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,7 +17,7 @@ public class TaskController {
     private TaskService taskService;
 
 
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public List<Task> findAll() {
         return taskService.findAll();
@@ -33,7 +30,14 @@ public class TaskController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public Task save(Task task) {
+    @PostMapping
+    public Task save(@RequestBody Task task) {
+        return taskService.save(task);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping
+    public Task updateTask(@RequestBody Task task) {
         return taskService.save(task);
     }
 }
