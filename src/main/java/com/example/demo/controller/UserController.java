@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.LoginDto;
+import com.example.demo.dto.resonse.LoginResponse;
+import com.example.demo.dto.resonse.UserProfileResponse;
 import com.example.demo.model.UserMaster;
 import com.example.demo.service.MasterUserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,9 +15,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 
 
 @Slf4j
@@ -33,13 +38,20 @@ public class UserController {
         return "Hello World";
     }
 
-    @GetMapping("/user")
-    @PreAuthorize("hasRole('USER')")
-    public String helloUser(){
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        log.info("username: " + authentication.getPrincipal().toString());
-//        log.info("password: " + authentication.getAuthorities());
-        return "Hello User";
+    @GetMapping("/myProfile")
+//    @PreAuthorize("hasRole('USER')")
+    public UserProfileResponse profile(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println(authentication);
+        UserProfileResponse userProfileResponse = new UserProfileResponse();
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            UserMaster userDetails = (UserMaster) authentication.getPrincipal();
+            System.out.println(userDetails.getAge());
+            userProfileResponse.setUsername(userDetails.getId()+"");
+            userProfileResponse.setRole(userDetails.getRole().toString());
+
+        }
+        return userProfileResponse;
     }
 
     @PostMapping("/save")
@@ -47,21 +59,18 @@ public class UserController {
         return userService.save(user);
     }
 
-    @PostMapping("/signin")
-    public ResponseEntity<String> authenticateUser(@RequestBody LoginDto loginDto, HttpServletRequest request){
-        System.out.println("aaa");
-
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                loginDto.getUsername(), loginDto.getPassword()));
-
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> authenticateUser(@RequestBody LoginDto loginDto){
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword()));
+        System.out.println(authentication);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        HttpSession session = request.getSession();
-        String sessionId = session.getId(); // Lấy session ID
-
-        return ResponseEntity.ok("Session ID: " + sessionId);
+        String username = authentication.getName();
+        LoginResponse loginResponse = new LoginResponse();
+        loginResponse.setUsername(username);
+        return ResponseEntity.ok(loginResponse);
     }
 
-    //vieest api login
+
 
 }
