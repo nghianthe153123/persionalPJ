@@ -38,8 +38,9 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) //TODO what is csrf
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/login").permitAll()
                         .requestMatchers("/user/**").hasRole("USER")
-//                        .anyRequest().permitAll()
+                        .anyRequest().authenticated()
                 ).formLogin(withDefaults());
                 return http.build();
     }
