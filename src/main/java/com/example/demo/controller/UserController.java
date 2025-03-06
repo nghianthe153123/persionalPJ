@@ -30,8 +30,8 @@ public class UserController {
     @Autowired
     private MasterUserService userService;
 
-//    @Autowired
-//    private AuthenticationManager authenticationManager;
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
     @GetMapping("/hello")
     public String hello() {
@@ -61,31 +61,27 @@ public class UserController {
 
 
     @PutMapping("/update")
-    public UserMaster updateUser(@RequestBody UserMaster user) {
+    public ResponseEntity<?> updateUser(@RequestBody UserMaster user) {
         System.out.println(user);
-//        UserMaster presentUser = (UserMaster) userService.loadUserById(user.getId());
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserMaster userDetails = (UserMaster) authentication.getPrincipal();
         //case admin
-        if("admin".equals(userDetails.getRole().toString())){
-            return userService.save(user);
-        }else if(userDetails.getId().equals(user.getId())){
-            return userService.save(user);
+        if("admin".equals(userDetails.getRole().toString()) || userDetails.getId().equals(user.getId())){
+            return ResponseEntity.ok(userService.save(user));
         }
-        return null;
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("can not access");
     }
 
-//    @PostMapping("/login")
-//    public ResponseEntity<LoginResponse> authenticateUser(@RequestBody LoginDto loginDto){
-//        Authentication authentication = authenticationManager.authenticate(
-//                new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword()));
-//        System.out.println(authentication);
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
-//        String username = authentication.getName();
-//        LoginResponse loginResponse = new LoginResponse();
-//        loginResponse.setUsername(username);
-//        return ResponseEntity.ok(loginResponse);
-//    }
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> authenticateUser(@RequestBody LoginDto loginDto){
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String username = authentication.getName();
+        LoginResponse loginResponse = new LoginResponse();
+        loginResponse.setUsername(username);
+        return ResponseEntity.ok(loginResponse);
+    }
 
 
 
