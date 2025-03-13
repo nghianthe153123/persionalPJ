@@ -5,8 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
@@ -56,6 +58,20 @@ public class UserMaster implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + role));
+    }
+
+    @PreUpdate
+    @PreRemove
+    public void checkPermissions() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserMaster userDetails = (UserMaster) authentication.getPrincipal();
+        if (authentication.getPrincipal() instanceof UserDetails) {
+            String currentUsername = userDetails.getUsername();
+            boolean isAdmin = "admin".equalsIgnoreCase(userDetails.getRole().toString());
+            if (!isAdmin && !this.username.equals(currentUsername)) {
+                throw new SecurityException("You only update your information");
+            }
+        }
     }
 
 

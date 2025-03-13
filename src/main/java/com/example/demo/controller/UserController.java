@@ -62,14 +62,15 @@ public class UserController {
 
     @PutMapping("/update")
     public ResponseEntity<?> updateUser(@RequestBody UserMaster user) {
-        System.out.println(user);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserMaster userDetails = (UserMaster) authentication.getPrincipal();
-        //case admin
-        if("admin".equals(userDetails.getRole().toString()) || userDetails.getId().equals(user.getId())){
-            return ResponseEntity.ok(userService.save(user));
-        }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("can not access");
+        return ResponseEntity.ok(userService.save(user));
+//        System.out.println(user);
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        UserMaster userDetails = (UserMaster) authentication.getPrincipal();
+//        //case admin
+//        if("admin".equals(userDetails.getRole().toString()) || userDetails.getId().equals(user.getId())){
+//            return ResponseEntity.ok(userService.save(user));
+//        }
+//        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("can not access");
     }
 
     @PostMapping("/login")
