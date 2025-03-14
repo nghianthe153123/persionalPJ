@@ -74,5 +74,7 @@ public class UserMaster implements UserDetails {
         }
     }
 
+    //TODO delegate spring security
+
 
 }

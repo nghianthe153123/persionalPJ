@@ -14,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @Service
@@ -30,9 +31,9 @@ public class MasterUserService implements UserDetailsService {
 
     public UserMaster save(UserMaster user) {
         //find exist user...
-        if (userRepository.existsByUsername(user.getUsername())) {
-            throw new UserExistException(user.getUsername());
-        }
+//        if (userRepository.existsByUsername(user.getUsername())) {
+//            throw new UserExistException(user.getUsername());
+//        }
         //save password with Bcrypt encoder
         String password = new BCryptPasswordEncoder().encode(user.getPassword());
         user.setPassword(password);
