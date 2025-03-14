@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,10 +19,15 @@ class AuthController {
     @Autowired
     private MasterUserService userService;
 
-    @GetMapping("/login")
-    String login() {
+    @GetMapping("/home")
+    public String showHomePage(Model model) {
         return "login";
     }
+
+//    @GetMapping("/login")
+//    String login() {
+//        return "login";
+//    }
     @PostMapping(value = "/signup", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String saveUser(
             @RequestParam String username,
