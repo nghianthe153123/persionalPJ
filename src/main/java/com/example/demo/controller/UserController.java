@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.concurrent.DelegatingSecurityContextExecutorService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,6 +22,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 @Slf4j
@@ -29,6 +34,7 @@ import java.util.Collection;
 public class UserController {
     @Autowired
     private MasterUserService userService;
+    private final ExecutorService executorService = new DelegatingSecurityContextExecutorService(Executors.newFixedThreadPool(5));
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -61,8 +67,17 @@ public class UserController {
 
 
     @PutMapping("/update")
-    public ResponseEntity<?> updateUser(@RequestBody UserMaster user) {
-        return ResponseEntity.ok(userService.save(user));
+    public CompletableFuture<ResponseEntity<?>> updateUser(@RequestBody UserMaster user) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return ResponseEntity.ok(userService.save(user));
+            } catch (Exception e) {
+                return ResponseEntity.status(500).body("Error updating user: " + e.getMessage());
+            }
+        }, executorService);
+    }
 //        System.out.println(user);
 //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 //        UserMaster userDetails = (UserMaster) authentication.getPrincipal();
@@ -73,17 +88,17 @@ public class UserController {
 //        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("can not access");
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<LoginResponse> authenticateUser(@RequestBody LoginDto loginDto){
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String username = authentication.getName();
-        LoginResponse loginResponse = new LoginResponse();
-        loginResponse.setUsername(username);
-        return ResponseEntity.ok(loginResponse);
-    }
+//    @PostMapping("/login")
+//    public ResponseEntity<LoginResponse> authenticateUser(@RequestBody LoginDto loginDto){
+//        Authentication authentication = authenticationManager.authenticate(
+//                new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword()));
+//        SecurityContextHolder.getContext().setAuthentication(authentication);
+//        String username = authentication.getName();
+//        LoginResponse loginResponse = new LoginResponse();
+//        loginResponse.setUsername(username);
+//        return ResponseEntity.ok(loginResponse);
+//    }
 
 
 
-}
+

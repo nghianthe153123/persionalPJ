@@ -39,9 +39,13 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/login").permitAll()
+                        .requestMatchers("/home").permitAll()
                         .requestMatchers("/user/**").hasRole("USER")
-                        .anyRequest().permitAll()
-                ).formLogin(form -> form.loginPage("/login"));
+                        .requestMatchers(("/")).permitAll()
+                        .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
+                        .anyRequest().authenticated()
+                ).formLogin(form -> form.loginPage("/login"))
+                .logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/"));
                 return http.build();
     }
     @Bean

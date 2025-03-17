@@ -7,49 +7,59 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
-@RestController
+import static com.example.demo.dto.FieldSearchDTO.SearchOperation.LIKE;
+
+@Controller
 @RequiredArgsConstructor
 public class ProductController {
     private static final Logger log = LoggerFactory.getLogger(ProductController.class);
 
     private final ProductService productService;
 
-    @GetMapping
-    public List<Product> getProducts() {
-        return productService.findAll();
+    @GetMapping()
+    public String getProducts(@PageableDefault(size = 10) Pageable pageable, Model model) {
+        List<FieldSearchDTO> searchDTOs = null;
+        Page<Product> products = productService.searchProducts(searchDTOs, pageable);
+        model.addAttribute("products", products);
+        return "list-product";
     }
-
-    @PutMapping
-    public Product updateProduct(@RequestBody Product product) {
-        return productService.save(product);
-    }
-
-    @DeleteMapping
-    public void deleteProduct(@RequestBody Product product) {
-        productService.delete(product);
-    }
-
-    @PostMapping
-    public Product addProduct(@RequestBody @Valid Product product) {
-        log.trace(product.getName());
-        return productService.save(product);
-    }
+//
+//    @PutMapping
+//    public Product updateProduct(@RequestBody Product product) {
+//        return productService.save(product);
+//    }
+//
+//    @DeleteMapping
+//    public void deleteProduct(@RequestBody Product product) {
+//        productService.delete(product);
+//    }
+//
+//    @PostMapping
+//    public Product addProduct(@RequestBody @Valid Product product) {
+//        log.trace(product.getName());
+//        return productService.save(product);
+//    }
 
     @PostMapping("/search")
-    public ResponseEntity<Page<Product>> searchProducts(
-            @RequestBody List<FieldSearchDTO> searchDTOs,
-            @PageableDefault(size = 10) Pageable pageable) {
+    public String searchProducts(
+            @RequestParam String name,
+            @PageableDefault(size = 10) Pageable pageable,
+            Model model) {
+        List<FieldSearchDTO> searchDTOs = new ArrayList<>();
+        searchDTOs.add(new FieldSearchDTO("name", name, LIKE));
         Page<Product> products = productService.searchProducts(searchDTOs, pageable);
-        return ResponseEntity.ok(products);
+        model.addAttribute("products", products);
+        return "list-product";
     }
 
 

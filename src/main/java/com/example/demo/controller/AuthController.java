@@ -20,29 +20,25 @@ class AuthController {
     private MasterUserService userService;
 
     @GetMapping("/home")
-    public String showHomePage(Model model) {
+    public String showHomePage() {
         return "login";
     }
 
-//    @GetMapping("/login")
-//    String login() {
-//        return "login";
-//    }
+    @GetMapping("/login")
+    String login() {
+        return "navbar-auth";
+    }
     @PostMapping(value = "/signup", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String saveUser(
             @RequestParam String username,
             @RequestParam String password,
-            RedirectAttributes redirectAttributes) { // Thêm RedirectAttributes
-
+            RedirectAttributes redirectAttributes) {
         UserMaster user = new UserMaster();
         user.setUsername(username);
         user.setPassword(password);
         userService.save(user);
-
-        // Thêm thông báo vào flash attributes
         redirectAttributes.addFlashAttribute("message", "Login Success!");
 
-        // Chuyển hướng đến trang login
         return "login";
     }
 

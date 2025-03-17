@@ -40,10 +40,8 @@ public class ProductService {
         if (searchDTOs != null && !searchDTOs.isEmpty()) {
             spec = createSpecification(searchDTOs);
         }
-
         if (spec != null)
             return productRepository.findAll(spec, pageable);
-
         return productRepository.findAll(pageable);
 
     }

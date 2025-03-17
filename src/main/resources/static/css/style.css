@@ -85,7 +85,7 @@ header {
     color: #19e8ff;
 }
 
-.navbar .login-btn {
+.navbar .login-btn, .navbar .logout-btn {
     border: none;
     outline: none;
     background: #fff;
@@ -98,7 +98,7 @@ header {
     transition: 0.15s ease;
 }
 
-.navbar .login-btn:hover {
+.navbar .login-btn:hover , .navbar .logout-btn:hover {
     background: #ddd;
 }
 
@@ -336,7 +336,7 @@ form button:hover {
         color: #00BCD4;
     }
 
-    .navbar .login-btn {
+    .navbar .login-btn , .navbar .logout-btn{
         font-size: 0.9rem;
         padding: 7px 10px;
     }

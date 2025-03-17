@@ -1,5 +1,5 @@
-<!-- templates/fragments/navbar-auth.html -->
-<div th:fragment="navbar-auth">
+
+<div th:fragment="navbar-auth" xmlns:sec="http://www.w3.org/1999/xhtml">
     <nav class="navbar">
         <span class="hamburger-btn material-symbols-rounded">menu</span>
         <a href="/" class="logo">
@@ -14,13 +14,13 @@
             <li><a href="#">About us</a></li>
             <li><a href="#">Contact us</a></li>
         </ul>
-        <button class="login-btn">LOG IN</button>
-    </nav>
+        <button class="login-btn" sec:authorize="!isAuthenticated()">LOG IN</button>
 
-    <!-- Auth Form -->
-    <div th:if="${message}" class="alert alert-success">
-        <p th:text="${message}"></p>
-    </div>
+        <form th:action="@{/logout}" method="post" sec:authorize="isAuthenticated()">
+            <button type="submit" class="logout-btn" style="margin: 0">LOG OUT</button>
+        </form>
+
+    </nav>
 
     <div class="blur-bg-overlay"></div>
     <div class="form-popup">
@@ -32,6 +32,7 @@
             </div>
             <div class="form-content">
                 <h2>LOGIN</h2>
+
                 <form th:action="@{/login}" method="post">
                     <div class="input-field">
                         <input type="text" name="username" required>
