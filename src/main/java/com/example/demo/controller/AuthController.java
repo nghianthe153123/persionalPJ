@@ -26,7 +26,7 @@ class AuthController {
 
     @GetMapping("/login")
     String login() {
-        return "navbar-auth";
+        return "login";
     }
     @PostMapping(value = "/signup", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String saveUser(
