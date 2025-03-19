@@ -42,5 +42,10 @@ class AuthController {
         return "login";
     }
 
+    @GetMapping("/profile")
+    public String profile() {
+        return "profile";
+    }
+
 
 }

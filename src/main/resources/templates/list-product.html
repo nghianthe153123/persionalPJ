@@ -19,7 +19,7 @@
 <header th:replace="~{fragments/navbar-auth :: navbar-auth}"></header>
 <div style="background-color: white; width: 1200px; display: flex; justify-content: center; margin: 0 auto;">
     <div style="background-color: white; width: 1200px;  justify-content: center; margin: 0 auto;">
-        <form th:action="@{/search}" method="post" class="form-search" style="margin-left: 20px; margin-right: 20px">
+        <form th:action="@{/search}" method="get" class="form-search" style="margin-left: 20px; margin-right: 20px">
             <span>Product Name: </span>
             <input type="text" name="name" placeholder="What are you looking for?" class="form-control"/></br>
             <button type="submit" class="btn btn-info">Search</button>

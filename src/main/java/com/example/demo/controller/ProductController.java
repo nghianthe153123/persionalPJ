@@ -50,9 +50,9 @@ public class ProductController {
 //        return productService.save(product);
 //    }
 
-    @PostMapping("/search")
+    @GetMapping("/search")
     public String searchProducts(
-            @RequestParam String name,
+            @RequestParam(name = "name", required = false, defaultValue = "") String name,
             @PageableDefault(size = 10) Pageable pageable,
             Model model) {
         List<FieldSearchDTO> searchDTOs = new ArrayList<>();

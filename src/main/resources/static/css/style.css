@@ -355,3 +355,12 @@ form button:hover {
         padding: 30px 20px;
     }
 }
+.dropdown-item:active,
+.dropdown-item:focus {
+    background-color: #00BCD4 !important;
+    color: white !important; /* Màu chữ tùy chỉnh */
+}
+.dropdown-menu {
+    right: 0;
+    left: auto;
+}
